@@ -1,0 +1,28 @@
+h1 {
+  display: none;
+  margin-top: 50px;
+  text-align: center;
+  font-weight: bold;
+  font-family: Arial;
+}
+
+.tile {
+  display: inline-block;
+  height: 50px;
+  width: 50px;
+  box-sizing: border-box;
+  border: 1px solid white;
+  position: relative;
+  font-size: 0;
+}
+
+.gameField { margin: 100px auto; }
+
+.available:hover {
+  cursor: pointer;
+  transition: border .2s;
+  border: none;
+}
+
+.wrong {
+  border-color: red;
