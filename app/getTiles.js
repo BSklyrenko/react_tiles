@@ -24,10 +24,10 @@ function getTiles(n) {
 	while(tiles.length < tilesAmount) {
 		index = Math.round(Math.random() * (colorsIndexes.length - 1));
 
-    if(colorsIndexes[index].used < 2) {
-      tiles.push({ tileId: index, isClicked: false, hide: false });
-      colorsIndexes[index].used++;
-    }
+    	if(colorsIndexes[index].used < 2) {
+      		tiles.push({ tileId: index, isClicked: false, hide: false });
+      		colorsIndexes[index].used++;
+    	}
 	}
 	return tiles.map((t, i) => Object.assign({tileKey: i}, t));
 }
