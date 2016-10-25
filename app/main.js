@@ -9,10 +9,10 @@ let roundInProgress = false;
 let currentTile;
 
 class Tile extends React.Component {
-	constructor() {
-		super();
+  constructor() {
+    super();
     this.inspect = this.inspect.bind(this)
-	}
+  }
   inspect() {
     if(roundIterationCount < 2
         && !this.props.tile.isClicked
