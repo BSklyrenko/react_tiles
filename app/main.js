@@ -4,9 +4,12 @@ import ReactDOM from 'react-dom';
 import { colors, getTiles } from './getTiles'
 window.emitter = ee();
 
-let roundIterationCount = 0;
+let roundIterationCount = true;          // global variables
 let roundInProgress = false;
 let currentTile;
+
+
+// React components definition
 
 class Tile extends React.Component {
   constructor() {
@@ -14,20 +17,19 @@ class Tile extends React.Component {
     this.inspect = this.inspect.bind(this)
   }
   inspect() {
-    if(roundIterationCount < 2
-        && !this.props.tile.isClicked
-        && !this.props.tile.hide
-        && !roundInProgress) {
+    if(!this.props.tile.isClicked && !roundInProgress) {
           window.emitter.emit('tileInspect', this.props.tile.tileKey)
     }
   }
 	render() {
-    let { tile, color, hide } = this.props;
+    let { hide, isClicked, tileId } = this.props.tile;
 		return (
 			<div className="tile available"
-				   style={{backgroundColor: color, visibility: hide ? 'hidden' : 'visible'}}
-           onClick={this.inspect}
-           >
+				   style={{
+             backgroundColor: isClicked ? colors[tileId] : '#444',
+             visibility: hide ? 'hidden' : 'visible'
+           }}
+           onClick={this.inspect}>
 			</div>
 		);
 	}
@@ -52,12 +54,7 @@ class App extends React.Component {
 		return(
 			<div className="gameField" style={{width: (50 * width) + 'px'}}>
 				{this.state.tiles.map((t, i) => {
-          return <Tile
-            key={t.tileKey}
-            tile={t}
-            color={t.isClicked ? colors[t.tileId] : '#444'}
-            hide={t.hide}
-          />
+          return <Tile key={i} tile={t} />
         })}
 			</div>
 		);
@@ -67,36 +64,33 @@ class App extends React.Component {
 ReactDOM.render(<App width={4} tiles={getTiles(4)}/>, document.getElementById('root'));
 
 
+// Round inspect functions
+
 function roundInspect(self, key) {
   let tiles = self.state.tiles;
 
-  if(roundIterationCount == 0) {
+  if(roundIterationCount) {
     currentTile = key;
-    roundIterationCount++;
+    roundIterationCount = false;
     self.setState({tiles: getTilesClicked(tiles, key)});
 
   } else {
-    roundIterationCount++;
+    roundInProgress = true;
     self.setState({tiles: getTilesClicked(tiles, key)});
 
     if(tiles[currentTile].tileId == tiles[key].tileId) {
-      let tileId = tiles[key].tileId;
-      roundInProgress = true;
-
       setTimeout(function() {
-        self.setState({tiles: getTilesHide(tiles, tileId)});
+        self.setState({tiles: getTilesHide(tiles, tiles[key].tileId)});
         roundInProgress = false;
-        roundIterationCount = 0;
       }, 1000);
-
     } else {
-      roundInProgress = true;
       setTimeout(function() {
         self.setState({tiles: getFalseTiles(tiles, key, currentTile)});
         roundInProgress = false;
-        roundIterationCount = 0;
       }, 1000);
     }
+
+    roundIterationCount = true;
   }
 }
 

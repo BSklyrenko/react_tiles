@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 let colors = ['#2ad2c9', '#d0e100', '#384d54', '#3fc380', '#000066',
               '#02a388', '#2c001e', '#ffd400', '#ff8700', '#646464',
               '#6f1ab1', '#76b900', '#5b9a68', '#334858', '#decba5',
@@ -15,7 +13,7 @@ function getTiles(n) {
 	while(colorsIndexes.length < tilesAmount / 2) {
 		index = Math.round(Math.random() * (colors.length - 1));
 
-		if($.inArray(index, used) === -1) {
+		if(used.indexOf(index) === -1) {
 			colorsIndexes.push({color: index, used: 0});
 			used.push(index);
 		}
