@@ -11,32 +11,6 @@ let currentTile;
 
 // React components definition
 
-class Tile extends React.Component {
-    constructor() {
-        super();
-        this.inspect = this.inspect.bind(this)
-    }
-
-    inspect() {
-        if (!this.props.tile.isClicked && !roundInProgress) {
-            window.emitter.emit('tileInspect', this.props.tile.tileKey)
-        }
-    }
-
-    render() {
-        let { hide, isClicked, tileId } = this.props.tile;
-        return (
-            <div className="tile available"
-                 style={{
-             backgroundColor: isClicked ? colors[tileId] : '#444',
-             visibility: hide ? 'hidden' : 'visible'
-           }}
-                 onClick={this.inspect}>
-            </div>
-        );
-    }
-}
-
 class App extends React.Component {
     constructor() {
         super();
@@ -47,11 +21,13 @@ class App extends React.Component {
         this.setState({tiles: this.props.tiles})
     }
 
-    componentDidMount() {
-        let self = this;
-        window.emitter.on('tileInspect', function (key) {
-            roundInspect(self, key);
-        });
+    click(node) {
+      let { tilekey, isclicked } = node.target.dataset;
+      isclicked = isclicked == "true" ? true : false; 
+
+      if(!isclicked && !roundInProgress) {
+        roundInspect(this, node.target.dataset.tilekey);
+      }
     }
 
     render() {
@@ -59,7 +35,18 @@ class App extends React.Component {
         return (
             <div className="gameField" style={{width: (50 * width) + 'px'}}>
                 {this.state.tiles.map((t, i) => {
-                    return <Tile key={i} tile={t}/>
+                    return (
+                      <div className="tile available"
+                           style={{
+                              backgroundColor: t.isClicked ? colors[t.tileId] : '#444',
+                              visibility: t.hide ? 'hidden' : 'visible'
+                           }}
+                           onClick={this.click.bind(this)}
+                           data-tilekey={t.tileKey}
+                           data-isclicked={t.isClicked}
+                           key={i}>
+                      </div>
+                    );
                 })}
             </div>
         );
