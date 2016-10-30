@@ -15,6 +15,7 @@ class App extends React.Component {
     constructor() {
         super();
         this.state = {tiles: 0}
+        this.click = this.click.bind(this);
     }
 
     componentWillMount() {
@@ -58,7 +59,7 @@ class App extends React.Component {
                               backgroundColor: t.isClicked ? colors[t.tileId] : '#444',
                               visibility: t.hide ? 'hidden' : 'visible'
                            }}
-                           onClick={this.click.bind(this)}
+                           onClick={this.click}
                            data-tilekey={t.tileKey}
                            data-isclicked={t.isClicked}
                            key={i}>
