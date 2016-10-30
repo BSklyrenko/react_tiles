@@ -26,7 +26,24 @@ class App extends React.Component {
       isclicked = isclicked == "true" ? true : false; 
 
       if(!isclicked && !roundInProgress) {
-        roundInspect(this, node.target.dataset.tilekey);
+        let tiles = this.state.tiles;
+        this.setState({tiles: getTilesClicked(tiles, tilekey)});
+
+        if(roundIterationCount) {
+            currentTile = tilekey;
+            roundIterationCount = false;
+        } else {
+            roundInProgress = true;
+            setTimeout(() => {
+                if(tiles[currentTile].tileId == tiles[tilekey].tileId) {
+                    this.setState({tiles: getTilesHide(tiles, tiles[tilekey].tileId)});
+                } else {
+                    this.setState({tiles: getFalseTiles(tiles, tilekey, currentTile)});
+                }
+                roundInProgress = false;
+                roundIterationCount = true;
+            }, 1000);
+        }
       }
     }
 
@@ -57,35 +74,7 @@ ReactDOM.render(<App width={4} tiles={getTiles(4)}/>, document.getElementById('r
 
 
 // Round inspect functions
-
-function roundInspect(self, key) {
-    let tiles = self.state.tiles;
-
-    if (roundIterationCount) {
-        currentTile = key;
-        roundIterationCount = false;
-        self.setState({tiles: getTilesClicked(tiles, key)});
-
-    } else {
-        roundInProgress = true;
-        self.setState({tiles: getTilesClicked(tiles, key)});
-
-        if (tiles[currentTile].tileId == tiles[key].tileId) {
-            setTimeout(function () {
-                self.setState({tiles: getTilesHide(tiles, tiles[key].tileId)});
-                roundInProgress = false;
-            }, 1000);
-        } else {
-            setTimeout(function () {
-                self.setState({tiles: getFalseTiles(tiles, key, currentTile)});
-                roundInProgress = false;
-            }, 1000);
-        }
-
-        roundIterationCount = true;
-    }
-}
-
+ 
 function getTilesClicked(tiles, key) {
     return tiles.map(t => {
         if (t.tileKey != key) return t;
