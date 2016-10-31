@@ -23,12 +23,13 @@ class App extends React.Component {
     }
 
     click(node) {
-      let { tilekey, isclicked } = node.target.dataset;
-      isclicked = isclicked == "true" ? true : false; 
+      let { tilekey, isClicked } = node.target.dataset;
+      isClicked = isClicked == "true" ? true : false;
 
-      if(!isclicked && !roundInProgress) {
+      if(!isClicked && !roundInProgress) {
         let tiles = this.state.tiles;
-        this.setState({tiles: getTilesClicked(tiles, tilekey)});
+        this.setState({tiles: tiles.map(t => t.tileKey != tilekey ? t :
+                              Object.assign({}, t, {isClicked: true}))});
 
         if(roundIterationCount) {
             currentTile = tilekey;
@@ -37,7 +38,8 @@ class App extends React.Component {
             roundInProgress = true;
             setTimeout(() => {
                 if(tiles[currentTile].tileId == tiles[tilekey].tileId) {
-                    this.setState({tiles: getTilesHide(tiles, tiles[tilekey].tileId)});
+                    this.setState({tiles: tiles.map(t => t.tileId != tiles[tilekey].tileId ? t :
+                                          Object.assign({}, t, {hide: true}))});
                 } else {
                     this.setState({tiles: getFalseTiles(tiles, tilekey, currentTile)});
                 }
@@ -60,8 +62,8 @@ class App extends React.Component {
                               visibility: t.hide ? 'hidden' : 'visible'
                            }}
                            onClick={this.click}
-                           data-tilekey={t.tileKey}
-                           data-isclicked={t.isClicked}
+                           data-tileKey={t.tileKey}
+                           data-isClicked={t.isClicked}
                            key={i}>
                       </div>
                     );
@@ -75,20 +77,7 @@ ReactDOM.render(<App width={4} tiles={getTiles(4)}/>, document.getElementById('r
 
 
 // Round inspect functions
- 
-function getTilesClicked(tiles, key) {
-    return tiles.map(t => {
-        if (t.tileKey != key) return t;
-        return Object.assign({}, t, {isClicked: true});
-    })
-}
 
-function getTilesHide(tiles, tileId) {
-    return tiles.map(t => {
-        if (t.tileId != tileId) return t;
-        return Object.assign({}, t, {hide: true});
-    })
-}
 
 function getFalseTiles(tiles, key1, key2) {
     return tiles.map(t => {
