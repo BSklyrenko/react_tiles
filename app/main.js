@@ -23,11 +23,12 @@ class App extends React.Component {
     }
 
     click(node) {
-      let { tilekey, isClicked } = node.target.dataset;
-      isClicked = isClicked == "true" ? true : false;
+      let { tilekey, isclicked } = node.target.dataset;
+      isclicked = isclicked == "true" ? true : false;
 
-      if(!isClicked && !roundInProgress) {
+      if(!isclicked && !roundInProgress) {
         let tiles = this.state.tiles;
+
         this.setState({tiles: tiles.map(t => t.tileKey != tilekey ? t :
                               Object.assign({}, t, {isClicked: true}))});
 
@@ -41,7 +42,8 @@ class App extends React.Component {
                     this.setState({tiles: tiles.map(t => t.tileId != tiles[tilekey].tileId ? t :
                                           Object.assign({}, t, {hide: true}))});
                 } else {
-                    this.setState({tiles: getFalseTiles(tiles, tilekey, currentTile)});
+                    this.setState({tiles: tiles.map(t => (t.tileKey == tilekey || t.tileKey == currentTile) ?
+                                          Object.assign({}, t, {isClicked: false}) : t)});
                 }
                 roundInProgress = false;
                 roundIterationCount = true;
@@ -62,8 +64,8 @@ class App extends React.Component {
                               visibility: t.hide ? 'hidden' : 'visible'
                            }}
                            onClick={this.click}
-                           data-tileKey={t.tileKey}
-                           data-isClicked={t.isClicked}
+                           data-tilekey={t.tileKey}
+                           data-isclicked={t.isClicked}
                            key={i}>
                       </div>
                     );
@@ -74,17 +76,3 @@ class App extends React.Component {
 }
 
 ReactDOM.render(<App width={4} tiles={getTiles(4)}/>, document.getElementById('root'));
-
-
-// Round inspect functions
-
-
-function getFalseTiles(tiles, key1, key2) {
-    return tiles.map(t => {
-        if (t.tileKey == key1 || t.tileKey == key2) {
-            return Object.assign({}, t, {isClicked: false});
-        } else {
-            return t;
-        }
-    })
-}
